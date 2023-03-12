@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "booru": "^2.6.3",
+    "cron": "^2.2.0",
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3",
+    "natural": "^6.2.0"
+  },
+  "name": "cunnybot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
