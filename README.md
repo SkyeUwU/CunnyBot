@@ -23,3 +23,4 @@ arona_(blue_archive) arisu_(blue_archive) iroha_(blue_archive)
 ```
 guro vore scat gore pee scat
 ```
+6. Execute `node index.js` to run the script
