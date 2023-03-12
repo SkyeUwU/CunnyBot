@@ -4,7 +4,8 @@ var { CronJob } = require('cron');
 var Booru = require('booru');
 var fs = require('fs');
 
-var rating = 'general';
+var rating = process.env.RATING;
+var site = process.env.SITE;
 var allowed_tags = fs.readFileSync("allowed_tags.txt", { encoding: 'utf8' }).trim().split(/\s+/g);
 var unused_tags = allowed_tags;
 var disallowed_tags = fs.readFileSync("disallowed_tags.txt", { encoding: 'utf8' }).trim().split(/\s+/g);
