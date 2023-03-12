@@ -14,13 +14,13 @@ RATING=general
 SITE=gelbooru
 ```
 4. Create two text files, "allowed_tags.txt" and "disallowed_tags.txt" insert your tags separated by spaces, new lines or booth in same time.
-Example allowed tags:
+- Example allowed tags:
 ```
 gawr_gura murasaki_shion laplus_darknesss
 uruha_rushia blue_archive hoshino_(blue_archive)
 arona_(blue_archive) arisu_(blue_archive) iroha_(blue_archive)
 ```
-Example disallowed tags:
+- Example disallowed tags:
 ```
 guro vore scat gore pee scat
 ```
