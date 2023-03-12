@@ -39,3 +39,8 @@ You're free to modify the script to customize the output, such as adding embeds,
 
 2. What happens after I make the pull request?
 - I will regularly review pull requests, and if I find that your version is suitable, it will become part of the next update.
+
+
+## License
+
+This project is licensed under the terms of the [MIT License](https://opensource.org/licenses/MIT), which allows you to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the conditions specified in the license.
