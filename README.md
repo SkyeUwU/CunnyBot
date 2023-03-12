@@ -35,5 +35,8 @@ You're free to modify the script to give any desired output you want, like addin
 
 ## Collaboration
 
-- How can i collaboare?
--- Just make a pull request and i will look into it c:
+1. How can i collaboare?
+- Just make a pull request and i will look into it c:
+
+2. What happens after I made the pull request?
+- I will regurally look at the pull requests and if I find you version is gonna it will become part of the next updates.
