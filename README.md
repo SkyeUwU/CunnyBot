@@ -35,4 +35,5 @@ You're free to modify the script to give any desired output you want, like addin
 
 ## Collaboration
 
-Anyone is free to collaborate, just make a pull request and i will look into it, if it's good it will become a new update c:
+- How can i collaboare?
+-- Just make a pull request and i will look into it c:
