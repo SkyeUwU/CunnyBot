@@ -43,4 +43,4 @@ You're free to modify the script to customize the output, such as adding embeds,
 
 ## License
 
-This project is licensed under the terms of the [MIT License](https://opensource.org/licenses/MIT), which allows you to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the conditions specified in the license.
+This project is licensed under the terms of the [MIT License](https://github.com/SkyeUwU/CunnyBot/blob/master/LICENSE), which allows you to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the conditions specified in the license.
