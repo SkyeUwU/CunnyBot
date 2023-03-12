@@ -13,7 +13,10 @@ var disallowed_tags = fs.readFileSync("disallowed_tags.txt", { encoding: 'utf8' 
 var client = new Discord.WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
 
 async function postToDiscord() {
+    if (!allowed_tags.length) process.kill(process.pid, "No tags has been found! The script has been killed")
+
     if (!unused_tags.length) unused_tags = allowed_tags;
+    console.log(`Tags left: ${unused_tags.join(", ")}`)
     var disallowedTags = disallowed_tags.map((tag) => '-' + tag);
     var tags = new Array();
     var tag = unused_tags[Math.floor(Math.random() * unused_tags.length)];
@@ -24,6 +27,13 @@ async function postToDiscord() {
     unused_tags = unused_tags.filter(a => a != tag);
 
     var posts = (await Booru.search(site, tags, { limit: 100, random: true })).posts;
+    if (!posts.length) {
+        console.error(`The tag "${tag}" returned no posts...`)
+        allowed_tags = allowed_tags.filter(a => a != tag);
+        postToDiscord();
+        return;
+    }
+
     var post = posts[Math.floor(Math.random() * posts.length)]
 
     console.log(`Sending post with id "${post.id}"...`)
