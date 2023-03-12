@@ -5,14 +5,14 @@
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3"
   },
-  "name": "cunnybot",
+  "name": "CunnyBot",
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "author": "SkyeUwU",
+  "license": "MIT",
+  "description": "A cute and funny bot that sends Discord webhook with images from image board sites."
 }
