@@ -1,6 +1,6 @@
 # CunnyBot
 
-CunnyBot is a cute and funny bot that sends an image from your favorite image board (booru) to your Discord webhook every hour. :3
+CunnyBot is a cute and funny bot that sends an image from your favorite image board (booru) to your Discord webhook every hour :3
 
 ## Installation
 
