@@ -26,7 +26,7 @@ guro vore scat gore pee scat
 ```
 5. Execute `node index.js` to run the script
 
-## Output example
+## Output
 
 Here's a example of what it might output:<br>
 ![example](https://cdn.discordapp.com/attachments/759466522312704000/1084357219614728202/image.png)
