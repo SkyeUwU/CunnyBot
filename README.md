@@ -14,14 +14,14 @@ RATING=general
 SITE=gelbooru
 ```
 4. Create two text files, "allowed_tags.txt" and "disallowed_tags.txt" and insert your tags separated by spaces, new lines or booth in same time.
-- Example allowed tags:
-```
+```python
+# Example allowed tags:
 gawr_gura murasaki_shion laplus_darknesss
 uruha_rushia blue_archive hoshino_(blue_archive)
 arona_(blue_archive) arisu_(blue_archive) iroha_(blue_archive)
 ```
-- Example disallowed tags:
-```
+```python
+# Example disallowed tags:
 guro vore scat gore pee scat
 ```
 5. Execute `node index.js` to run the script
