@@ -7,7 +7,7 @@ CunnyBot is a cute and funny bot that sends any image from your favorite image b
 1. Run `npm install` to install all the required modules. All the required modules will be pulled automatically from the package.json
 2. Create a ".env" file inside the root path of the project
 3. Insert the text below replacing it with your own values
-```bash
+```env
 WEBHOOK_ID=your-webhook-id-here
 WEBHOOK_TOKEN=your-webhook-token-here
 RATING=general
