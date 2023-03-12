@@ -13,7 +13,7 @@ WEBHOOK_TOKEN=your-webhook-token-here
 RATING=general
 SITE=gelbooru
 ```
-4. Create two text files, "allowed_tags.txt" and "disallowed_tags.txt" insert your tags separated by spaces, new lines or booth in same time.
+4. Create two text files, "allowed_tags.txt" and "disallowed_tags.txt" and insert your tags separated by spaces, new lines or booth in same time.
 - Example allowed tags:
 ```
 gawr_gura murasaki_shion laplus_darknesss
