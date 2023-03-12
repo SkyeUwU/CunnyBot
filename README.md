@@ -24,3 +24,10 @@ arona_(blue_archive) arisu_(blue_archive) iroha_(blue_archive)
 guro vore scat gore pee scat
 ```
 6. Execute `node index.js` to run the script
+
+## Output example
+
+Here's a example of what it might output:
+![example](https://cdn.discordapp.com/attachments/759466522312704000/1084357219614728202/image.png)
+
+You're free to modify the script to give any desired output you want,like adding embeds, modifying the schedule and anything else
