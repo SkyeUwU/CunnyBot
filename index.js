@@ -23,7 +23,7 @@ async function postToDiscord() {
 
     unused_tags = unused_tags.filter(a => a != tag);
 
-    var posts = (await Booru.search('gelbooru', tags, { limit: 100, random: true })).posts;
+    var posts = (await Booru.search(site, tags, { limit: 100, random: true })).posts;
     var post = posts[Math.floor(Math.random() * posts.length)]
 
     console.log(`Sending post with id "${post.id}"...`)
