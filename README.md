@@ -30,4 +30,4 @@ guro vore scat gore pee scat
 Here's a example of what it might output:<br>
 ![example](https://cdn.discordapp.com/attachments/759466522312704000/1084357219614728202/image.png)
 
-You're free to modify the script to give any desired output you want,like adding embeds, modifying the schedule and everything else
+You're free to modify the script to give any desired output you want, like adding embeds, modifying the schedule and everything else
