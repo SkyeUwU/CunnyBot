@@ -42,7 +42,7 @@ async function postToDiscord() {
 }
 
 async function check() {
-    console.log(`Checking for new Gelbooru posts...`);
+    console.log(`Checking for new posts...`);
     try {
         await postToDiscord();
     } catch (error) {
