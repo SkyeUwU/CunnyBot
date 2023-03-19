@@ -33,10 +33,10 @@ You're free to modify the script to customize the output, such as adding embeds,
 
 ## Collaboration
 
-1. How can I collaborate?
+### How can I collaborate?
 - Simply make a pull request, and I will review it. I would be more than happy to have someone improve my code, as it pretty much sucks.
 
-2. What happens after I make the pull request?
+### What happens after I make the pull request?
 - I will regularly review pull requests, and if I find that your version is suitable, it will become part of the next update.
 
 
