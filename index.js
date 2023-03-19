@@ -1,19 +1,41 @@
 require('dotenv').config();
-var Discord = require('discord.js');
-var { CronJob } = require('cron');
-var Booru = require('booru');
-var fs = require('fs');
+const Discord = require('discord.js');
+const { CronJob } = require('cron');
+const Booru = require('booru');
+const fs = require('fs');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const csvParser = require("csvtojson");
 
-var rating = process.env.RATING;
-var site = process.env.SITE;
-var allowed_tags = fs.readFileSync("allowed_tags.txt", { encoding: 'utf8' }).trim().split(/\s+/g);
+const client = new Discord.WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
+
+// -- CONFIG VARIABLES ----------------------//
+
+// searching
+const rating = "general"; // The rating you want to use. "General" rating is used by Gelbooru to define the SFW posts, but other boorus might use the "safe" rating instead.
+const site = "gelbooru"; // The website you want to send pictures from.
+const allowedTagsFile = "allowed_tags.txt"; // The file containing the tags you want to include in the search. The code will pick a random tag instead of using all the tags at once.
+const disallowedTagsFile = "disallowed_tags.txt"; // The file containing the tags you want to exclude from all the searches.
+
+// logging
+const logToFile = "logs.csv"; // The file you want to log every post that was sent. Use "var logToFile = false" if you don't want to log it.
+const deleteLogsOlderThan = 2; // Days
+
+// others
+const sendAtStart = true; // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
+
+//-------------------------------------------//
+//-- WARNING: It's not recommanded to modify the code below if you don't know what are you doing -- //
+
+var allowed_tags = fs.readFileSync(allowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);
 var unused_tags = allowed_tags;
-var disallowed_tags = fs.readFileSync("disallowed_tags.txt", { encoding: 'utf8' }).trim().split(/\s+/g);
-
-var client = new Discord.WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
+var disallowed_tags = fs.readFileSync(disallowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);
 
 async function postToDiscord() {
-    if (!allowed_tags.length) process.kill(process.pid, "No tags has been found! The script has been killed")
+    antiFlood()
+    if (!allowed_tags.length) {
+        console.error("No tags has been found! The script got killed x-x")
+        process.kill(process.pid);
+    }
 
     if (!unused_tags.length) unused_tags = allowed_tags;
     console.log(`Tags left: ${unused_tags.join(", ")}`)
@@ -34,7 +56,9 @@ async function postToDiscord() {
         return;
     }
 
-    var post = posts[Math.floor(Math.random() * posts.length)]
+    var post = posts[Math.floor(Math.random() * posts.length)];
+
+    if (await isInLogs(post.id)) return postToDiscord();
 
     console.log(`Sending post with id "${post.id}"...`)
     console.log(`Using the tags: ${tags.join(", ")}`)
@@ -46,8 +70,9 @@ async function postToDiscord() {
         avatarURL: 'https://media.discordapp.net/attachments/759466522312704000/1083769825047875775/20230310_171040.jpg',
         username: `CunnyBot - ${tagBeautified}`
     }).then(() => {
-        console.log("The posts has been sent successfully!")
+        console.log("The post has been sent successfully!")
         console.log("\n");
+        logFunction(post.id, tag, true)
     });
 }
 
@@ -63,5 +88,115 @@ async function check() {
 
 var job = new CronJob('0 * * * *', check, null, true, 'America/Los_Angeles');
 job.start();
+if (sendAtStart) check();
+console.log("Job started!");
 
-console.log("Job started!")
+async function logFunction(postID, tagUsed, wasSuccessful) {
+    if (!logToFile) return false;
+    try {
+        const csvHeader = [
+            { id: 'postID', title: 'postID' },
+            { id: 'tagUsed', title: 'tagUsed' },
+            { id: 'timestamp', title: 'timestamp' },
+            { id: 'successful', title: 'successful' }
+        ]
+
+        var newData = [{
+            postID: postID,
+            tagUsed: tagUsed,
+            timestamp: Date.now(),
+            successful: wasSuccessful
+        }];
+
+        if (!fs.existsSync(logToFile)) {
+            const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader });
+            await csvWriter.writeRecords(newData);
+        } else {
+            const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader, append: true });
+            await csvWriter.writeRecords(newData);
+        }
+
+        var read = fs.createReadStream(logToFile);
+
+        const json = await csvParser({
+            noheader: false,
+            output: "json"
+        }).fromStream(read);
+
+        const newJSON = json.filter(row => Date.now() - parseInt(row.timestamp) < daysToMs(deleteLogsOlderThan));
+        if (arraysEqual(newJSON, json)) {
+            const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader, append: false });
+            await csvWriter.writeRecords(newJSON);
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+async function isInLogs(postID) {
+    if (!logToFile) return false;
+    if (!fs.existsSync(logToFile)) return false;
+    var read = fs.createReadStream(logToFile);
+
+    var json = await csvParser({
+        noheader: false,
+        output: "json"
+    }).fromStream(read);
+
+    var isInRows = false;
+
+    json.forEach(row => {
+        if (parseInt(row.postID) == postID && row.successful == 'true') isInRows = true;
+    })
+
+    return isInRows;
+}
+
+function daysToMs(days) {
+    const hours = days * 24;
+    const minutes = hours * 60;
+    const seconds = minutes * 60;
+    const ms = seconds * 1000;
+    return ms;
+}
+
+function arraysEqual(array1, array2) {
+    if (array1.length !== array2.length) {
+        return false;
+    }
+    for (let i = 0; i < array1.length; i++) {
+        if (!objectsEqual(array1[i], array2[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function objectsEqual(object1, object2) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+    for (let key of keys1) {
+        if (object1[key] !== object2[key]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+var floods = 0;
+var timeout;
+
+function antiFlood() {
+    if (floods > 10) {
+        console.error(`The script tried to send posts too fast!\nSolutions:\n1. Clean the logs file "${logToFile}".\n2. Check the allowed and disallowed tags for tags that doesn't exist.\n3. Check if the rating is valid for the booru you picked.\n4. Check if the booru you picked is valid (you can check the "booru" npm package docs for more info).`)
+        process.kill(process.pid);
+    }
+    if (timeout) clearTimeout(timeout);
+    floods++
+    timeout = setTimeout(function () {
+        floods = 0;
+    }, 5000)
+}

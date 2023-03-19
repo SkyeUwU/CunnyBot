@@ -2,13 +2,14 @@
   "dependencies": {
     "booru": "^2.6.3",
     "cron": "^2.2.0",
+    "csv-writer": "^1.6.0",
+    "csvtojson": "^2.0.10",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3"
   },
-  "name": "CunnyBot",
-  "version": "1.0.0",
+  "name": "cunnybot",
+  "version": "1.1.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

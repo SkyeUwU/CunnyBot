@@ -4,3 +4,4 @@ config.json
 README.md
 allowed_tags.txt
 disallowed_tags.txt
+logs.csv
