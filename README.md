@@ -21,7 +21,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
     # Example disallowed tags:
     guro vore scat gore pee scat
     ```
-5. Optional: edit the variables between "CONFIG VARIABLES" comment.
+5. Optional: edit the variables between "CONFIG VARIABLES" comment inside the `index.js` file.
 6. Run `node index.js` to execute the script.
 
 ## Output
