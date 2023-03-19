@@ -21,7 +21,7 @@ const logToFile = "logs.csv"; // The file you want to log every post that was se
 const deleteLogsOlderThan = 2; // Days
 
 // others
-const sendAtStart = true; // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
+const sendAtStart = false; // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
 
 //-------------------------------------------//
 //-- WARNING: It's not recommanded to modify the code below if you don't know what are you doing -- //
