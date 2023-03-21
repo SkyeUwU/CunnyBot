@@ -124,7 +124,7 @@ async function logFunction(postID, tagUsed, wasSuccessful) {
         }).fromStream(read);
 
         const newJSON = json.filter(row => Date.now() - parseInt(row.timestamp) < daysToMs(deleteLogsOlderThan));
-        if (arraysEqual(newJSON, json)) {
+        if (!arraysEqual(newJSON, json)) {
             const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader, append: false });
             await csvWriter.writeRecords(newJSON);
         }
