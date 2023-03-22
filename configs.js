@@ -1,4 +1,4 @@
-let configs = {
+configs = {
     rating: "general", // The rating you want to use. "General" rating is used by Gelbooru to define the SFW posts, but other boorus might use the "safe" rating instead.
     site: "gelbooru", // The website you want to send pictures from.
     allowedTagsFile: "allowed_tags.txt", // The file containing the tags you want to include in the search. The code will pick a random tag instead of using all the tags at once.
