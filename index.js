@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { rating, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, sendAtStart } = require('./configs.js');
+const { rating, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, preventDuplicates, sendAtStart } = require('./configs.js');
 const Discord = require('discord.js');
 const { CronJob } = require('cron');
 const Booru = require('booru');
@@ -117,7 +117,7 @@ async function logFunction(postID, tagUsed, wasSuccessful) {
 }
 
 async function isInLogs(postID) {
-    if (!logToFile) return false;
+    if (!logToFile || !preventDuplicates) return false;
     if (!fs.existsSync(logToFile)) return false;
     var read = fs.createReadStream(logToFile);
 
@@ -174,7 +174,7 @@ var timeout;
 
 function antiFlood() {
     if (floods > 10) {
-        console.error(`The script tried to send posts too fast!\nSolutions:\n1. Clean the logs file "${logToFile}".\n2. Check the allowed and disallowed tags for tags that doesn't exist.\n3. Check if the rating is valid for the booru you picked.\n4. Check if the booru you picked is valid (you can check the "booru" npm package docs for more info).`)
+        console.error(`The script tried to send posts too fast!\nSolutions:\n1. Clean the logs file "${logToFile}" or completely disable logging.\n2. Check the allowed and disallowed tags for tags that doesn't exist.\n3. Check if the rating is valid for the booru you picked.\n4. Check if the booru you picked is valid (you can check the "booru" npm package docs for more info).\n5. Disable the duplicated posts checking feature in the config.js`)
         process.kill(process.pid);
     }
     if (timeout) clearTimeout(timeout);
