@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('configs.js');
+const { rating, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, sendAtStart } = require('./configs.js');
 const Discord = require('discord.js');
 const { CronJob } = require('cron');
 const Booru = require('booru');
