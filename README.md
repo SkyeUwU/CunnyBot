@@ -8,8 +8,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
 2. Create a `.env` file in the root path of the project.
 3. Insert the following text, replacing the values with your own:
    ```python
-   WEBHOOK_ID=your-webhook-id-here
-   WEBHOOK_TOKEN=your-webhook-token-here
+   WEBHOOK_URL=your-webhook-url-here
    ```
 4. Create two text files, `allowed_tags.txt` and `disallowed_tags.txt`, and insert your tags separated by spaces, new lines, or both. For example:
 
