@@ -1,15 +1,5 @@
 require('dotenv').config();
-const {
-    rating,
-    site,
-    allowedTagsFile,
-    disallowedTagsFile,
-    allowAnimations,
-    logToFile,
-    deleteLogsOlderThan,
-    preventDuplicates,
-    sendAtStart 
-} = require('./configs.js');
+const { rating, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, preventDuplicates, sendAtStart } = require('./configs.js');
 const Discord = require('discord.js');
 const { CronJob } = require('cron');
 const Booru = require('booru');
@@ -17,169 +7,179 @@ const fs = require('fs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const csvParser = require("csvtojson");
 
-const client = new Discord.WebhookClient({ url: process.env.WEBHOOK_URL });
+const client = new Discord.WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
 
-const read_stream = logToFile ? fs.createReadStream(logToFile) : null;
+var allowed_tags = fs.readFileSync(allowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);
+var unused_tags = allowed_tags;
+var disallowed_tags = fs.readFileSync(disallowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);
 
-const allowedTags = fs.readFileSync(allowedTagsFile, { encoding: "utf8" })
-                      .trim()
-                      .split(/\s+/g)
-                      .filter(tag => tag);
-
-const disallowedTags = fs.readFileSync(disallowedTagsFile, { encoding: "utf8" })
-                         .trim()
-                         .split(/\s+/g)
-                         .filter(tag => tag)
-                         .map(tag => `-${tag}`);
-if (!allowAnimations)
-    disallowedTags.push("-animated");
-
-const unusedTags = [...allowedTags];
-
-const getRandomItemFromArray = (array) => {
-    return array[Math.floor(Math.random() * array.length)];
-};
-
-const removeTagFromArray = (array, tag) => {
-    const index = array.findIndex(arrTag => arrTag === tag);
-    array.splice(index, 1);
-};
-
-const isAlreadyPosted = async (post) => {
-    const json = await csvParser({
-        noheader: false,
-        output: "json"
-    }).fromStream(read_stream);
-
-    return !json.every(row => row.postID != post.id);
-};
-
-const getFreshPost = async (postsArray) => {
-    let post = postsArray[0];
-    if (preventDuplicates) {
-        let index = 1;
-        const postsArrayLength = postsArray.length;
-        for (; (await isAlreadyPosted(post)) && index < postsArrayLength; ++index)
-            post = postsArray[index];
-        if (index === postsArray)
-            return false;
+async function postToDiscord() {
+    antiFlood()
+    if (!allowed_tags.length) {
+        console.error("No tags has been found! The script got killed x-x")
+        process.kill(process.pid);
     }
-    return post;
-};
 
-const beautifyTag = (tag) => {
-    let index;
-    return tag.split('_')
-              .map(token => (((index = +(token[0] === '('))) ? '(' : "").concat(token[index++].toUpperCase(), token.slice(index)))
-              .join(' ');
-};
+    if (!unused_tags.length) unused_tags = allowed_tags;
+    console.log(`Tags left: ${unused_tags.join(", ")}`)
+    var disallowedTags = disallowed_tags.map((tag) => '-' + tag);
+    var tags = new Array();
+    var tag = unused_tags[Math.floor(Math.random() * unused_tags.length)];
+    tags = tags.concat(disallowedTags);
+    tags.push(tag);
+    tags.push(`rating:${rating}`);
 
-const postImage = async () => {
-    do {
-        if (!allowedTags.length) {
-            console.error("No tags have been found! The script got killed x-x");
-            process.kill(process.pid);
-        }
+    unused_tags = unused_tags.filter(a => a != tag);
 
-        if (!unusedTags.length)
-            unusedTags.concat(allowedTags);
+    var posts = (await Booru.search(site, tags, { limit: 100, random: true })).posts;
+    if (!posts.length) {
+        console.error(`The tag "${tag}" returned no posts...`)
+        allowed_tags = allowed_tags.filter(a => a != tag);
+        postToDiscord();
+        return;
+    }
 
-        const currentTag = getRandomItemFromArray(unusedTags);
+    var post = posts[Math.floor(Math.random() * posts.length)];
 
-        const tags = [
-            ...disallowedTags,
-            currentTag,
-        ];
+    if (await isInLogs(post.id)) return postToDiscord();
 
-        if (rating)
-            tags.push(`rating:${rating}`);
+    console.log(`Sending post with id "${post.id}"...`)
+    console.log(`Using the tags: ${tags.join(", ")}`)
 
-        removeTagFromArray(unusedTags, currentTag);
+    var tagBeautified = tag.split("_").map(t => t.startsWith("(") ? ("(" + t[1].toUpperCase() + t.substring(2)) : (t[0].toUpperCase() + t.substring(1))).join(" ")
 
-        const posts = (await Booru.search(site, tags, { limit: 3, random: true })).posts;
-        if (!posts.length) {
-            console.log(`The tag ${currentTag} returned no posts`);
-            removeTagFromArray(allowedTags, currentTag);
-            continue;
-        }
-
-        const post = await getFreshPost(posts);
-
-        console.log(`Sending image with ID: (${post.id})\nUsing the tags: ${tags.join(", ")}`);
-
-        await client.send({
-            content: post.fileUrl,
-            avatarURL: 'https://media.discordapp.net/attachments/759466522312704000/1083769825047875775/20230310_171040.jpg',
-            username: `CunnyBot - ${beautifyTag(currentTag)}`
-        });
-
-        console.log("The post has been sent successfully!\n");
-
-        if (logToFile)
-            logPost(post, tags);
-    } while (0);
+    await client.send({
+        content: post.fileUrl,
+        avatarURL: 'https://media.discordapp.net/attachments/759466522312704000/1083769825047875775/20230310_171040.jpg',
+        username: `CunnyBot - ${tagBeautified}`
+    }).then(() => {
+        console.log("The post has been sent successfully!")
+        console.log("\n");
+        logFunction(post.id, tag, true)
+    });
 }
 
 async function check() {
     console.log(`Checking for new posts...`);
     try {
-        await postImage();
+        await postToDiscord();
     } catch (error) {
-        console.error(error, '\n');
+        console.error(error);
+        console.log("\n");
     }
 }
 
-function daysToMs(days) {
-    // 86400000 is constant from (24 * 60^2 * 1000)
-    return days * 86400000;
-}
+var job = new CronJob('0 * * * *', check, null, true, 'America/Los_Angeles');
+job.start();
+if (sendAtStart) check();
+console.log("Job started!");
 
-const logHeader = [
-    { id: 'postID', title: 'postID' },
-    { id: 'tagUsed', title: 'tagUsed' },
-    { id: 'timestamp', title: 'timestamp' }
-];
-
-const logPost = async (post, tagUsed) => {
+async function logFunction(postID, tagUsed, wasSuccessful) {
+    if (!logToFile) return false;
     try {
+        const csvHeader = [
+            { id: 'postID', title: 'postID' },
+            { id: 'tagUsed', title: 'tagUsed' },
+            { id: 'timestamp', title: 'timestamp' },
+            { id: 'successful', title: 'successful' }
+        ]
+
+        var newData = [{
+            postID: postID,
+            tagUsed: tagUsed,
+            timestamp: Date.now(),
+            successful: wasSuccessful
+        }];
+
+        if (!fs.existsSync(logToFile)) {
+            const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader });
+            await csvWriter.writeRecords(newData);
+        } else {
+            const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader, append: true });
+            await csvWriter.writeRecords(newData);
+        }
+
+        var read = fs.createReadStream(logToFile);
+
         const json = await csvParser({
             noheader: false,
             output: "json"
-        }).fromStream(read_stream);
+        }).fromStream(read);
 
-        const newData = [{
-            postID: post.id,
-            tagUsed: tagUsed,
-            timestamp: Date.now()
-        }];
-
-        const csvWriterOptions = { path: logToFile, header: logHeader, append: false };
-        let expiredIndex = json.findIndex(data => (Date.now() - parseInt(data.timestamp)) < daysToMs(deleteLogsOlderThan));
-        let logsToWrite;
-        if (expiredIndex != -1) {
-            logsToWrite = [];
-            for (++expiredIndex; expiredIndex < json.length; ++expiredIndex) {
-                const data = json[expiredIndex];
-                if (isDataFresh(data))
-                    logsToWrite.push(data);
-            }
-            logsToWrite.push(newData[0]);
+        const newJSON = json.filter(row => Date.now() - parseInt(row.timestamp) < daysToMs(deleteLogsOlderThan));
+        if (!arraysEqual(newJSON, json)) {
+            const csvWriter = createCsvWriter({ path: logToFile, header: csvHeader, append: false });
+            await csvWriter.writeRecords(newJSON);
         }
-        else {
-            csvWriterOptions.append = true;
-            logsToWrite = newData;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+async function isInLogs(postID) {
+    if (!logToFile || !preventDuplicates) return false;
+    if (!fs.existsSync(logToFile)) return false;
+    var read = fs.createReadStream(logToFile);
+
+    var json = await csvParser({
+        noheader: false,
+        output: "json"
+    }).fromStream(read);
+
+    var isInRows = false;
+
+    json.forEach(row => {
+        if (parseInt(row.postID) == postID && row.successful == 'true') isInRows = true;
+    })
+
+    return isInRows;
+}
+
+function daysToMs(days) {
+    const hours = days * 24;
+    const minutes = hours * 60;
+    const seconds = minutes * 60;
+    const ms = seconds * 1000;
+    return ms;
+}
+
+function arraysEqual(array1, array2) {
+    if (array1.length !== array2.length) {
+        return false;
+    }
+    for (let i = 0; i < array1.length; i++) {
+        if (!objectsEqual(array1[i], array2[i])) {
+            return false;
         }
-
-        await createCsvWriter(csvWriterOptions).writeRecords(logsToWrite);
-        console.log("Logged", logsToWrite);
     }
-    catch (error) {
-        console.error(error);
-    }
-};
+    return true;
+}
 
-const job = new CronJob('0 * * * *', check, null, true, 'America/Los_Angeles');
-job.start();
-if (sendAtStart)
-    check();
-console.log("Job started!");
+function objectsEqual(object1, object2) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+    for (let key of keys1) {
+        if (object1[key] !== object2[key]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+var floods = 0;
+var timeout;
+
+function antiFlood() {
+    if (floods > 10) {
+        console.error(`The script tried to send posts too fast!\nSolutions:\n1. Clean the logs file "${logToFile}" or completely disable logging.\n2. Check the allowed and disallowed tags for tags that doesn't exist.\n3. Check if the rating is valid for the booru you picked.\n4. Check if the booru you picked is valid (you can check the "booru" npm package docs for more info).\n5. Disable the duplicated posts checking feature in the config.js`)
+        process.kill(process.pid);
+    }
+    if (timeout) clearTimeout(timeout);
+    floods++
+    timeout = setTimeout(function () {
+        floods = 0;
+    }, 5000)
+}
