@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { rating, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, preventDuplicates, sendAtStart } = require('./configs.js');
+var { disallowedRatings, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, preventDuplicates, sendAtStart } = require('./configs.js');
 const Discord = require('discord.js');
 const { CronJob } = require('cron');
 const Booru = require('booru');
@@ -9,6 +9,7 @@ const csvParser = require("csvtojson");
 
 const client = new Discord.WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
 
+disallowedRatings = disallowedRatings.split(/\s+|,+/g).map(rating => `-rating:${rating}`)
 var allowed_tags = fs.readFileSync(allowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);
 var unused_tags = allowed_tags;
 var disallowed_tags = fs.readFileSync(disallowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);
@@ -27,7 +28,7 @@ async function postToDiscord() {
     var tag = unused_tags[Math.floor(Math.random() * unused_tags.length)];
     tags = tags.concat(disallowedTags);
     tags.push(tag);
-    tags.push(`rating:${rating}`);
+    disallowedRatings.forEach(rating => { tags.push(rating) })
 
     unused_tags = unused_tags.filter(a => a != tag);
 
