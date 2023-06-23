@@ -5,3 +5,4 @@ allowed_tags.txt
 disallowed_tags.txt
 logs.csv
 configs.js
+package-lock.json
