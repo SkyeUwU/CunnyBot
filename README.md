@@ -23,6 +23,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
    ```
 
 5. Create a file named `configs.js` and paste the text bellow. (Optional: edit the variables inside it with the ones you like).
+
    ```
    module.exports = {
       disallowedRatings: "explicit questionable", // The rating you want to exclude. "General" rating is used by Gelbooru to define the SFW posts, but other boorus might use the "safe" rating instead.
@@ -35,7 +36,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
       preventDuplicates: true, // If enabled the code will reject any posts that already had been sent and will try sending another post (notice: the logging must be enabled for this feature to work)
 
       sendAtStart: false, // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
-  }
+   }
   ```
 6. Run `node index.js` to execute the script.
 
