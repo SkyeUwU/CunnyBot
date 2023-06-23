@@ -4,3 +4,4 @@ config.json
 allowed_tags.txt
 disallowed_tags.txt
 logs.csv
+configs.js
