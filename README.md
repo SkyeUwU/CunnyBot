@@ -19,7 +19,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
    arona_(blue_archive) arisu_(blue_archive) iroha_(blue_archive)
 
    # Example disallowed tags:
-   guro vore scat gore pee scat
+   guro vore scat gore pee
    ```
 
 5. Create a file named `configs.js` and paste the text bellow. (Optional: edit the variables inside it with the ones you like):
