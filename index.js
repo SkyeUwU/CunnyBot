@@ -7,7 +7,7 @@ const fs = require('fs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const csvParser = require("csvtojson");
 
-const client = new Discord.WebhookClient({ id: process.env.WEBHOOK_ID, token: process.env.WEBHOOK_TOKEN });
+const client = new Discord.WebhookClient({ url: process.env.WEBHOOK_URL });
 
 disallowedRatings = disallowedRatings.split(/\s+|,+/g).map(rating => `-rating:${rating}`)
 var allowed_tags = fs.readFileSync(allowedTagsFile, { encoding: 'utf8' }).trim().split(/\s+/g).filter(tag => !!tag);

@@ -8,5 +8,5 @@ module.exports = {
     deleteLogsOlderThan: 7, // Days
     preventDuplicates: true, // If enabled the code will reject any posts that already had been sent and will try sending another post (notice: the logging must be enabled for this feature to work)
 
-    sendAtStart: false, // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
+    sendAtStart: true, // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
 }

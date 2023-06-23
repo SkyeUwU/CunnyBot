@@ -7,6 +7,9 @@
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3"
   },
+  "overrides": {
+    "xml2js": "^0.5.0"
+  },
   "name": "cunnybot",
   "version": "1.1.0",
   "main": "index.js",
