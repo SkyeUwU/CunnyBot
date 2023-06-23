@@ -24,7 +24,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
 
 5. Create a file named `configs.js` and paste the text bellow. (Optional: edit the variables inside it with the ones you like):
 
-   ```
+   ```javascript
    module.exports = {
       disallowedRatings: "explicit questionable", // The rating you want to exclude. "General" rating is used by Gelbooru to define the SFW posts, but other boorus might use the "safe" rating instead.
       site: "gelbooru", // The website you want to send pictures from.
