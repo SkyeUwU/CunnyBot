@@ -22,7 +22,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
    guro vore scat gore pee scat
    ```
 
-5. Create a file named `configs.js` and paste the text bellow. (Optional: edit the variables inside it with the ones you like).
+5. Create a file named `configs.js` and paste the text bellow. (Optional: edit the variables inside it with the ones you like):
 
    ```
    module.exports = {
@@ -37,7 +37,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
 
       sendAtStart: false, // If you want to send the post when the script starts and then every hour at minute zero (true) or only every hour at minute zero (false).
    }
-  ```
+   ```
 
 6. Run `node index.js` to execute the script.
 
