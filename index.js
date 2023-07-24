@@ -1,5 +1,5 @@
 require('dotenv').config();
-var { disallowedRatings, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, preventDuplicates, sendAtStart } = require('./configs.js');
+var { disallowedRatings, site, allowedTagsFile, disallowedTagsFile, logToFile, deleteLogsOlderThan, preventDuplicates, sendAtStart, outputType } = require('./configs.js');
 const Discord = require('discord.js');
 const { CronJob } = require('cron');
 const Booru = require('booru');
@@ -50,7 +50,7 @@ async function postToDiscord() {
     var tagBeautified = tag.split("_").map(t => t.startsWith("(") ? ("(" + t[1].toUpperCase() + t.substring(2)) : (t[0].toUpperCase() + t.substring(1))).join(" ")
 
     await client.send({
-        content: post.fileUrl,
+        content: post[outputType || 'fileUrl'] || post['fileUrl'],
         avatarURL: 'https://media.discordapp.net/attachments/759466522312704000/1083769825047875775/20230310_171040.jpg',
         username: `CunnyBot - ${tagBeautified}`
     }).then(() => {
