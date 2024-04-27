@@ -46,7 +46,7 @@ CunnyBot is a cute and funny bot that sends an image from your favorite image bo
 ## Output
 
 Here's an example of what the output might look like: <br>
-![example output](https://cdn.discordapp.com/attachments/759466522312704000/1084357219614728202/image.png)
+![example output](https://raw.githubusercontent.com/SkyeUwU/CunnyBot/master/example-output.png)
 
 You're free to modify the script to customize the output, such as adding embeds, modifying the schedule, and more.
 
